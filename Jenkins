@@ -1,1 +1,31 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
+public class Pipeline<T> {
+
+    private final List<Function<T, T>> stages = new ArrayList<>();
+
+    public Pipeline<T> addStage(Function<T, T> stage) {
+        stages.add(stage);
+        return this;
+    }
+
+    public T execute(T input) {
+        T result = input;
+        for (Function<T, T> stage : stages) {
+            result = stage.apply(result);
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+        Pipeline<String> pipeline = new Pipeline<>();
+
+        pipeline.addStage(s -> s.toUpperCase())
+                .addStage(s -> s.replaceAll(" ", "_"));
+
+        String result = pipeline.execute("hello world");
+        System.out.println(result); // Output: HELLO_WORLD
+    }
+}
